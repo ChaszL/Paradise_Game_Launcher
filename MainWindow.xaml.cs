@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using System.Text.Json;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Windows.Input;
+using System.Windows.Media;
 
 namespace GameLauncher;
 
@@ -110,6 +112,15 @@ public partial class MainWindow : Window, INotifyPropertyChanged
             Launcher.Launch(game);
             AddToRecents(game);
         }
+    }
+
+    private void RecentsBlock_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
+    {
+        if (MainContentScrollViewer == null) return;
+
+        e.Handled = true;
+        var newOffset = MainContentScrollViewer.VerticalOffset - (e.Delta / 3.0);
+        MainContentScrollViewer.ScrollToVerticalOffset(Math.Max(0, Math.Min(MainContentScrollViewer.ScrollableHeight, newOffset)));
     }
 
     private void SearchBox_TextChanged(object sender, TextChangedEventArgs e)

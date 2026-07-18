@@ -149,7 +149,7 @@
 
         <!-- Content Area (Scrolls beneath Navbar) -->
         <Grid Grid.Row="1">
-            <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="0,15,0,0">
+            <ScrollViewer x:Name="MainContentScrollViewer" VerticalScrollBarVisibility="Auto" Margin="0,15,0,0">
                 <StackPanel Margin="30,20,30,40">
 
                     <!-- LARGE SYSTEM STATS CIRCLES -->
@@ -232,10 +232,9 @@
 
                     </StackPanel>
 
-                    <StackPanel x:Name="RecentsBlock" Margin="0,0,0,60">
+                    <StackPanel x:Name="RecentsBlock" Margin="0,0,0,60" PreviewMouseWheel="RecentsBlock_PreviewMouseWheel">
                         <TextBlock Text="RECENTLY PLAYED" Foreground="#666" FontSize="22" FontWeight="Black" HorizontalAlignment="Center" Margin="0,0,0,20"/>
                         
-                        <!-- Added HorizontalScrollBarVisibility="Hidden" -->
                         <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Disabled">
                             <ItemsControl ItemsSource="{Binding RecentGames}">
                                 <ItemsControl.ItemsPanel>
