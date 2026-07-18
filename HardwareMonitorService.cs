@@ -67,7 +67,7 @@ public class HardwareMonitorService
                     sensor.SensorType == SensorType.Load)
                 {
                     // AMD often uses "GPU Core" while some drivers/versions might use "GPU Total"
-                    if (sensor.Name == "GPU Core" || sensor.Name == "GPU Total")
+                    if (sensor.Name == "GPU Core")
                     {
                         info.GPUValue = (int)(sensor.Value ?? 0);
                     }

@@ -6,13 +6,16 @@ namespace GameLauncher
 {
     public class Launcher
     {
+        // method to launch a given game from the gamedata object
         public static void Launch(GameData game)
         {
+            // 
             try
             {
                 // start the process using the game's file path
                 ProcessStartInfo startInfo = new ProcessStartInfo
                 {
+                    // using the games filepath from the gamedata object to set = to a game path
                     FileName = game.Path,
                     UseShellExecute = true
                 };
