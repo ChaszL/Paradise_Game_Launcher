@@ -21,6 +21,48 @@ public class GameData : INotifyPropertyChanged
         } 
     }
 
+    private string _category = "Uncategorized";
+    public string Category
+    {
+        get => _category;
+        set
+        {
+            if (_category != value)
+            {
+                _category = value;
+                OnPropertyChanged();
+            }
+        }
+    }
+
+    private bool _isSelected;
+    public bool IsSelected
+    {
+        get => _isSelected;
+        set
+        {
+            if (_isSelected != value)
+            {
+                _isSelected = value;
+                OnPropertyChanged();
+            }
+        }
+    }
+
+    private bool _installed;
+    public bool Installed
+    {
+        get => _installed;
+        set
+        {
+            if (_installed != value)
+            {
+                _installed = value;
+                OnPropertyChanged();
+            }
+        }
+    }
+
     // Boilerplate code required for WPF property updates
     public event PropertyChangedEventHandler? PropertyChanged;
     protected void OnPropertyChanged([CallerMemberName] string? name = null)
@@ -36,7 +78,8 @@ public static class GameFactory
         return new GameData 
         { 
             Name = Path.GetFileNameWithoutExtension(filePath), 
-            Path = filePath 
+            Path = filePath,
+            Category = "Uncategorized"
         };
     }
 }

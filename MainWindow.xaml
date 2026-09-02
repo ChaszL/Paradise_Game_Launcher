@@ -51,20 +51,37 @@
                         <Grid Margin="12">
                             <Border Background="#1A1A1A" CornerRadius="12">
                                 <Border.Effect>
-                                    <DropShadowEffect BlurRadius="20" ShadowDepth="8" Opacity="0.5" Direction="270" Color="Black"/>
+                                    <DropShadowEffect BlurRadius="10" ShadowDepth="3" Opacity="0.35" Direction="270" Color="Black"/>
                                 </Border.Effect>
                             </Border>
                             <Border CornerRadius="12" ClipToBounds="True">
-                                <Image Source="{Binding GridUrl}" Stretch="UniformToFill" />
+                                <Grid>
+                                    <Image Source="{Binding GridUrl}" Stretch="UniformToFill" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    <Border VerticalAlignment="Bottom">
+                                        <Border.Background>
+                                            <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                                <GradientStop Color="#00000000" Offset="0"/>
+                                                <GradientStop Color="#D0000000" Offset="1"/>
+                                            </LinearGradientBrush>
+                                        </Border.Background>
+                                        <TextBlock Text="{Binding Name}" Foreground="White" FontSize="12" FontWeight="Bold"
+                                                   TextTrimming="CharacterEllipsis" TextWrapping="NoWrap"
+                                                   Padding="6,10,6,6" IsHitTestVisible="False"/>
+                                    </Border>
+                                </Grid>
+                            </Border>
+                            <Border x:Name="InstallBadge" Background="#CCB00020" CornerRadius="6" Padding="6" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="10" Visibility="Collapsed" IsHitTestVisible="False">
+                                <TextBlock Text="NOT INSTALLED" Foreground="White" FontSize="12" FontWeight="Bold"/>
                             </Border>
                             <Border x:Name="HoverOverlay" Background="Black" Opacity="0" CornerRadius="12" IsHitTestVisible="False"/>
-                            <Border x:Name="HighlightBorder" BorderBrush="#33FFFFFF" BorderThickness="1" CornerRadius="12" Opacity="0" IsHitTestVisible="False"/>
                         </Grid>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
                                 <Setter TargetName="HoverOverlay" Property="Opacity" Value="0.10"/>
-                                <Setter TargetName="HighlightBorder" Property="Opacity" Value="1"/>
                             </Trigger>
+                            <DataTrigger Binding="{Binding Installed}" Value="False">
+                                <Setter TargetName="InstallBadge" Property="Visibility" Value="Visible"/>
+                            </DataTrigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Setter.Value>
@@ -127,6 +144,102 @@
                                 <Setter TargetName="BgBorder" Property="BorderBrush" Value="{Binding DataContext.CurrentSettings.LogoColor, RelativeSource={RelativeSource AncestorType=Window}}"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style TargetType="ComboBoxItem">
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Padding" Value="10,6"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ComboBoxItem">
+                        <Border x:Name="Bd"
+                                Background="{TemplateBinding Background}"
+                                Padding="{TemplateBinding Padding}"
+                                SnapsToDevicePixels="True">
+                            <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsHighlighted" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="#2A2A2A"/>
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="#333333"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="ModernComboBox" TargetType="ComboBox">
+            <Setter Property="Background" Value="#1A1A1A"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="TextElement.Foreground" Value="White"/>
+            <Setter Property="BorderBrush" Value="#333"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="12,8"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ComboBox">
+                        <Grid>
+                            <ToggleButton x:Name="ToggleButton"
+                                          Background="{TemplateBinding Background}"
+                                          BorderBrush="{TemplateBinding BorderBrush}"
+                                          BorderThickness="{TemplateBinding BorderThickness}"
+                                          Focusable="False"
+                                          ClickMode="Press"
+                                          IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
+                                          HorizontalContentAlignment="Stretch"
+                                          VerticalContentAlignment="Center"
+                                          Content="{Binding SelectionBoxItem, RelativeSource={RelativeSource TemplatedParent}}"
+                                          ContentTemplate="{Binding SelectionBoxItemTemplate, RelativeSource={RelativeSource TemplatedParent}}">
+                                <ToggleButton.Template>
+                                    <ControlTemplate TargetType="ToggleButton">
+                                        <Border x:Name="Border"
+                                                Background="{TemplateBinding Background}"
+                                                BorderBrush="{TemplateBinding BorderBrush}"
+                                                BorderThickness="{TemplateBinding BorderThickness}"
+                                                CornerRadius="8">
+                                            <Grid>
+                                                <TextBlock Margin="12,8,28,8"
+                                                           HorizontalAlignment="Left"
+                                                           VerticalAlignment="Center"
+                                                           Foreground="White"
+                                                           Text="{TemplateBinding Content}" />
+                                                <Path Data="M 0 0 L 5 5 L 10 0 Z" Fill="White" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                                            </Grid>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="Border" Property="BorderBrush" Value="#666"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </ToggleButton.Template>
+                            </ToggleButton>
+                            <Popup x:Name="Popup"
+                                   Placement="Bottom"
+                                   IsOpen="{TemplateBinding IsDropDownOpen}"
+                                   AllowsTransparency="True"
+                                   Focusable="False"
+                                   PopupAnimation="Slide">
+                                <Border Background="#1A1A1A"
+                                        BorderBrush="#333"
+                                        BorderThickness="1"
+                                        CornerRadius="8"
+                                        MinWidth="{TemplateBinding ActualWidth}"
+                                        MaxHeight="220">
+                                    <ScrollViewer SnapsToDevicePixels="True">
+                                        <ItemsPresenter KeyboardNavigation.DirectionalNavigation="Contained" />
+                                    </ScrollViewer>
+                                </Border>
+                            </Popup>
+                        </Grid>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
@@ -264,10 +377,12 @@
                         </ItemsControl.ItemsPanel>
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <Button Click="Launch_Click" 
-                                        Style="{StaticResource ModernBannerStyle}"
-                                        Width="{Binding DataContext.CurrentSettings.BannerWidth, RelativeSource={RelativeSource AncestorType=Window}}"
-                                        Height="{Binding DataContext.CurrentSettings.BannerHeight, RelativeSource={RelativeSource AncestorType=Window}}"/>
+                                <Grid Margin="12">
+                                    <Button Click="Launch_Click" 
+                                            Style="{StaticResource ModernBannerStyle}"
+                                            Width="{Binding DataContext.CurrentSettings.BannerWidth, RelativeSource={RelativeSource AncestorType=Window}}"
+                                            Height="{Binding DataContext.CurrentSettings.BannerHeight, RelativeSource={RelativeSource AncestorType=Window}}"/>
+                                </Grid>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
@@ -277,7 +392,7 @@
         </Grid>
 
         <!-- Navbar (Row 0, drawn on top for shadow effect) -->
-        <Border Grid.Row="0" Background="{Binding CurrentSettings.NavbarColor}" Opacity="0.98">
+        <Border x:Name="TopNavbarBorder" Grid.Row="0" Background="{Binding CurrentSettings.NavbarColor}" Opacity="0.98">
             <Border.Effect>
                 <DropShadowEffect BlurRadius="15" ShadowDepth="4" Opacity="0.4" Direction="270" Color="Black"/>
             </Border.Effect>
@@ -337,6 +452,15 @@
                 </StackPanel>
 
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <ComboBox x:Name="CategoryFilterBox" Width="220" Height="38"
+                              Margin="0,0,15,0"
+                              Style="{StaticResource ModernComboBox}"
+                              ItemsSource="{Binding FilterCategories}"
+                              SelectedItem="{Binding SelectedCategory, Mode=TwoWay}"
+                              SelectionChanged="CategoryFilter_SelectionChanged"
+                              ToolTip="Filter by category"
+                              IsEditable="False"/>
+
                     <TextBox x:Name="SearchBox" Width="260" Height="38" 
                              Margin="0,0,25,0" TextChanged="SearchBox_TextChanged"
                              Style="{StaticResource ModernTextBox}"
@@ -365,7 +489,7 @@
                 <SolidColorBrush Color="Black" Opacity="0.85"/>
             </Grid.Background>
 
-            <Border Background="{Binding CurrentSettings.NavbarColor}" 
+                <Border x:Name="SettingsPanelBorder" Background="{Binding CurrentSettings.NavbarColor}" 
                     VerticalAlignment="Center" HorizontalAlignment="Center" 
                     Padding="40" CornerRadius="16" Width="550">
                 <Border.Effect>
@@ -378,57 +502,208 @@
                                 FontSize="20" FontWeight="Black" Margin="0,0,0,35" HorizontalAlignment="Center"/>
 
                         <TextBlock Text="APPEARANCE" Foreground="#777" FontSize="12" FontWeight="Black" Margin="0,0,0,12"/>
-                        <UniformGrid Columns="2" Margin="0,0,0,25">
-                            <StackPanel Margin="0,0,10,0">
-                                <TextBlock Text="Background Hex" Foreground="#AAA" FontSize="11" Margin="0,0,0,6"/>
-                                <TextBox Text="{Binding CurrentSettings.BackgroundColor}" Style="{StaticResource ModernTextBox}"/>
-                            </StackPanel>
+                        <Border Background="#1A1A1A" BorderBrush="#333" BorderThickness="1" CornerRadius="10" Padding="12" Margin="0,0,0,25">
                             <StackPanel>
-                                <TextBlock Text="Navbar Hex" Foreground="#AAA" FontSize="11" Margin="0,0,0,6"/>
-                                <TextBox Text="{Binding CurrentSettings.NavbarColor}" Style="{StaticResource ModernTextBox}"/>
+                                <Grid Margin="0,0,0,10">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <ComboBox x:Name="ColorTargetBox" Grid.Column="0" Style="{StaticResource ModernComboBox}" SelectionChanged="ColorTargetBox_SelectionChanged" Margin="0,0,10,0">
+                                        <ComboBoxItem Content="Edit Background Color" Tag="Background"/>
+                                        <ComboBoxItem Content="Edit Navbar Color" Tag="Navbar"/>
+                                    </ComboBox>
+
+                                    <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                                        <StackPanel Margin="0,0,10,0">
+                                            <TextBlock Text="BG" Foreground="#777" FontSize="10" HorizontalAlignment="Center"/>
+                                            <Border x:Name="BackgroundCurrentPreview" Width="30" Height="24" BorderBrush="#555" BorderThickness="1" CornerRadius="4"/>
+                                        </StackPanel>
+                                        <StackPanel>
+                                            <TextBlock Text="NAV" Foreground="#777" FontSize="10" HorizontalAlignment="Center"/>
+                                            <Border x:Name="NavbarCurrentPreview" Width="30" Height="24" BorderBrush="#555" BorderThickness="1" CornerRadius="4"/>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </Grid>
+
+                                <Canvas x:Name="SVCanvas" Height="220" Background="Transparent" MouseDown="SVCanvas_MouseDown" MouseMove="SVCanvas_MouseMove" MouseUp="SVCanvas_MouseUp" SizeChanged="SVCanvas_SizeChanged" Margin="0,0,0,10">
+                                    <Rectangle Width="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=Canvas}}" Height="{Binding ActualHeight, RelativeSource={RelativeSource AncestorType=Canvas}}" x:Name="SVHueBase" Fill="#FF0000" RadiusX="8" RadiusY="8"/>
+                                    <Rectangle Width="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=Canvas}}" Height="{Binding ActualHeight, RelativeSource={RelativeSource AncestorType=Canvas}}" RadiusX="8" RadiusY="8">
+                                        <Rectangle.Fill>
+                                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                                <GradientStop Color="White" Offset="0"/>
+                                                <GradientStop Color="#00FFFFFF" Offset="1"/>
+                                            </LinearGradientBrush>
+                                        </Rectangle.Fill>
+                                    </Rectangle>
+                                    <Rectangle Width="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=Canvas}}" Height="{Binding ActualHeight, RelativeSource={RelativeSource AncestorType=Canvas}}" RadiusX="8" RadiusY="8">
+                                        <Rectangle.Fill>
+                                            <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                                <GradientStop Color="#00000000" Offset="0"/>
+                                                <GradientStop Color="Black" Offset="1"/>
+                                            </LinearGradientBrush>
+                                        </Rectangle.Fill>
+                                    </Rectangle>
+                                    <Ellipse x:Name="SVSelector" Width="14" Height="14" Stroke="White" StrokeThickness="2" Fill="Transparent" IsHitTestVisible="False"/>
+                                </Canvas>
+
+                                <Grid Height="24" Margin="0,0,0,10">
+                                    <Rectangle RadiusX="6" RadiusY="6">
+                                        <Rectangle.Fill>
+                                            <LinearGradientBrush StartPoint="0,0.5" EndPoint="1,0.5">
+                                                <GradientStop Color="#FF0000" Offset="0.00"/>
+                                                <GradientStop Color="#FFFF00" Offset="0.17"/>
+                                                <GradientStop Color="#00FF00" Offset="0.33"/>
+                                                <GradientStop Color="#00FFFF" Offset="0.50"/>
+                                                <GradientStop Color="#0000FF" Offset="0.67"/>
+                                                <GradientStop Color="#FF00FF" Offset="0.83"/>
+                                                <GradientStop Color="#FF0000" Offset="1.00"/>
+                                            </LinearGradientBrush>
+                                        </Rectangle.Fill>
+                                    </Rectangle>
+                                    <Slider x:Name="HueSlider" Minimum="0" Maximum="359" ValueChanged="HueSlider_ValueChanged" Background="#00FFFFFF" Foreground="#00FFFFFF" BorderBrush="#00FFFFFF"/>
+                                </Grid>
+
+                                <TextBox x:Name="PickerHexBox" Style="{StaticResource ModernTextBox}" Margin="0,0,0,10" TextChanged="PickerHexBox_TextChanged"/>
+
+                                <UniformGrid Columns="4">
+                                    <Border Background="#151515" BorderBrush="#333" BorderThickness="1" CornerRadius="6" Margin="0,0,6,0" Padding="8,6">
+                                        <StackPanel>
+                                            <TextBlock Text="RGB" Foreground="#777" FontSize="10"/>
+                                            <TextBlock x:Name="RgbValueText" Foreground="White" FontSize="11"/>
+                                        </StackPanel>
+                                    </Border>
+                                    <Border Background="#151515" BorderBrush="#333" BorderThickness="1" CornerRadius="6" Margin="0,0,6,0" Padding="8,6">
+                                        <StackPanel>
+                                            <TextBlock Text="CMYK" Foreground="#777" FontSize="10"/>
+                                            <TextBlock x:Name="CmykValueText" Foreground="White" FontSize="11"/>
+                                        </StackPanel>
+                                    </Border>
+                                    <Border Background="#151515" BorderBrush="#333" BorderThickness="1" CornerRadius="6" Margin="0,0,6,0" Padding="8,6">
+                                        <StackPanel>
+                                            <TextBlock Text="HSV" Foreground="#777" FontSize="10"/>
+                                            <TextBlock x:Name="HsvValueText" Foreground="White" FontSize="11"/>
+                                        </StackPanel>
+                                    </Border>
+                                    <Border Background="#151515" BorderBrush="#333" BorderThickness="1" CornerRadius="6" Padding="8,6">
+                                        <StackPanel>
+                                            <TextBlock Text="HSL" Foreground="#777" FontSize="10"/>
+                                            <TextBlock x:Name="HslValueText" Foreground="White" FontSize="11"/>
+                                        </StackPanel>
+                                    </Border>
+                                </UniformGrid>
                             </StackPanel>
-                        </UniformGrid>
+                        </Border>
 
                         <TextBlock Text="LIBRARY GRID SIZING" Foreground="#777" FontSize="12" FontWeight="Black" Margin="0,0,0,12"/>
-                        <Grid Margin="0,0,0,25">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-                            <StackPanel Grid.Column="0" Margin="0,0,10,0">
-                                <TextBlock Text="Banner Width" Foreground="#AAA" FontSize="11"/>
-                                <Slider Minimum="100" Maximum="400" Value="{Binding CurrentSettings.BannerWidth}" Margin="0,8"/>
-                            </StackPanel>
-                            <StackPanel Grid.Column="1">
-                                <TextBlock Text="Banner Height" Foreground="#AAA" FontSize="11"/>
-                                <Slider Minimum="150" Maximum="600" Value="{Binding CurrentSettings.BannerHeight}" Margin="0,8"/>
-                            </StackPanel>
-                        </Grid>
+                        <TextBlock Text="Library Banner Scale" Foreground="#AAA" FontSize="11" Margin="0,0,0,6"/>
+                        <ComboBox x:Name="LibraryBannerScaleBox"
+                                  Style="{StaticResource ModernComboBox}"
+                                  SelectionChanged="LibraryBannerScaleBox_SelectionChanged"
+                                  Margin="0,0,0,20">
+                            <ComboBoxItem Content="Small (130 x 195)" Tag="130x195"/>
+                            <ComboBoxItem Content="Default (150 x 225)" Tag="150x225"/>
+                            <ComboBoxItem Content="Large (180 x 270)" Tag="180x270"/>
+                            <ComboBoxItem Content="Extra Large (220 x 330)" Tag="220x330"/>
+                        </ComboBox>
 
                         <TextBlock Text="RECENTS GRID SIZING" Foreground="#777" FontSize="12" FontWeight="Black" Margin="0,0,0,12"/>
-                        <Grid Margin="0,0,0,25">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-                            <StackPanel Grid.Column="0" Margin="0,0,10,0">
-                                <TextBlock Text="Recents Banner Width" Foreground="#AAA" FontSize="11"/>
-                                <Slider Minimum="100" Maximum="400" Value="{Binding CurrentSettings.RecentsBannerWidth}" Margin="0,8"/>
-                            </StackPanel>
-                            <StackPanel Grid.Column="1">
-                                <TextBlock Text="Recents Banner Height" Foreground="#AAA" FontSize="11"/>
-                                <Slider Minimum="150" Maximum="600" Value="{Binding CurrentSettings.RecentsBannerHeight}" Margin="0,8"/>
-                            </StackPanel>
-                        </Grid>
+                        <TextBlock Text="Recents Banner Scale" Foreground="#AAA" FontSize="11" Margin="0,0,0,6"/>
+                        <ComboBox x:Name="RecentsBannerScaleBox"
+                                  Style="{StaticResource ModernComboBox}"
+                                  SelectionChanged="RecentsBannerScaleBox_SelectionChanged"
+                                  Margin="0,0,0,20">
+                            <ComboBoxItem Content="Small (80 x 120)" Tag="80x120"/>
+                            <ComboBoxItem Content="Default (100 x 150)" Tag="100x150"/>
+                            <ComboBoxItem Content="Large (120 x 180)" Tag="120x180"/>
+                            <ComboBoxItem Content="Extra Large (140 x 210)" Tag="140x210"/>
+                        </ComboBox>
 
                         <Rectangle Height="1" Fill="#222" Margin="0,10,0,25"/>
 
                         <TextBlock Text="SYSTEM" Foreground="#777" FontSize="12" FontWeight="Black" Margin="0,0,0,12"/>
-                        <TextBlock Text="SteamGridDB API Key" Foreground="#AAA" FontSize="11" Margin="0,0,0,6"/>
-                        <TextBox Text="{Binding CurrentSettings.SteamGridApiKey}" Style="{StaticResource ModernTextBox}" Margin="0,0,0,18"/>
-
                         <TextBlock Text="Game Library Path" Foreground="#AAA" FontSize="11" Margin="0,0,0,6"/>
-                        <TextBox Text="{Binding CurrentSettings.GameLibraryPath}" Style="{StaticResource ModernTextBox}" Margin="0,0,0,40"/>
+                        <Grid Margin="0,0,0,20">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBox x:Name="GameLibraryPathBox" Text="{Binding CurrentSettings.GameLibraryPath}" Style="{StaticResource ModernTextBox}" Margin="0,0,10,0"/>
+                            <Button Grid.Column="1" Content="Browse" Click="BrowseGameLibraryPath_Click"
+                                    Background="#222" Foreground="White" FontWeight="Bold" Cursor="Hand" Padding="14,8">
+                                <Button.Template>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border Background="{TemplateBinding Background}" CornerRadius="8">
+                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" Margin="{TemplateBinding Padding}"/>
+                                        </Border>
+                                    </ControlTemplate>
+                                </Button.Template>
+                            </Button>
+                        </Grid>
+
+                        <TextBlock Text="CATEGORIES" Foreground="#777" FontSize="12" FontWeight="Black" Margin="0,0,0,10"/>
+                        <TextBlock Text="Add a category or change categories from the manager." Foreground="#AAA" FontSize="11" Margin="0,0,0,8"/>
+                        <Grid Margin="0,0,0,10">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBox x:Name="NewCategoryBox" Style="{StaticResource ModernTextBox}" Margin="0,0,10,0"/>
+                            <Button Grid.Column="1" Content="Add Category" Click="AddCategory_Click"
+                                    Background="#222" Foreground="White" FontWeight="Bold" Cursor="Hand" Padding="14,8">
+                                <Button.Template>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border Background="{TemplateBinding Background}" CornerRadius="8">
+                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" Margin="{TemplateBinding Padding}"/>
+                                        </Border>
+                                    </ControlTemplate>
+                                </Button.Template>
+                            </Button>
+                        </Grid>
+
+                        <Button Content="Open Game Category Manager" Click="OpenCategoryManager_Click" Margin="0,0,0,8"
+                                Background="#222" Foreground="White" FontWeight="Bold" FontSize="13" Cursor="Hand" Padding="14,10">
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Border Background="{TemplateBinding Background}" CornerRadius="10">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" Margin="{TemplateBinding Padding}"/>
+                                    </Border>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+
+                        <Border x:Name="CategoryManagerPanel" Visibility="Collapsed" Background="#121212" BorderBrush="#333" BorderThickness="1" CornerRadius="10" Padding="10" Margin="0,0,0,10">
+                            <StackPanel>
+                                <TextBlock Text="Select a game below to see its current category and change it instantly." Foreground="#AAA" FontSize="11" Margin="0,0,0,8"/>
+                                <ScrollViewer MaxHeight="240" VerticalScrollBarVisibility="Auto">
+                                    <ItemsControl ItemsSource="{Binding Games}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <Border Background="#1A1A1A" CornerRadius="8" Padding="8" Margin="0,0,0,6">
+                                                    <Grid>
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="*"/>
+                                                            <ColumnDefinition Width="160"/>
+                                                        </Grid.ColumnDefinitions>
+                                                        <StackPanel Grid.Column="0">
+                                                            <TextBlock Text="{Binding Name}" Foreground="White" FontWeight="Bold" FontSize="12" TextWrapping="Wrap"/>
+                                                            <TextBlock Text="{Binding Category, StringFormat='Current: {0}'}" Foreground="#AAA" FontSize="11" Margin="0,4,0,0"/>
+                                                        </StackPanel>
+                                                        <ComboBox Grid.Column="1"
+                                                                  Margin="8,0,0,0"
+                                                                  Style="{StaticResource ModernComboBox}"
+                                                                  ItemsSource="{Binding DataContext.AssignableCategories, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                                  SelectedItem="{Binding Category, Mode=OneWay}"
+                                                                  SelectionChanged="CategorySelection_Changed"/>
+                                                    </Grid>
+                                                </Border>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </ScrollViewer>
+                            </StackPanel>
+                        </Border>
 
                         <UniformGrid Columns="2" Height="48">
                             <Button Content="Save Changes" Click="SaveSettings_Click" Margin="0,0,10,0" 

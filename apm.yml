@@ -1,0 +1,38 @@
+name: ParadiseGameLauncherTest
+version: 1.0.0
+description: 'Paradise Launcher is a custom desktop game library application built
+  with C# 14.0 and WPF on .NET 10.0 (Windows). It acts as a unified hub for discovering,
+  organizing, and launching PC games while delivering real-time hardware telemetry.  Core
+  Technical Architecture & FeaturesMulti-Storefront Game Detection & Execution: Scans
+  system directories, registry paths, and launcher manifests to automatically discover
+  installed titles across platforms like Epic Games, Ubisoft Connect, GOG Galaxy,
+  and Xbox Game Pass / Microsoft Store. Launch requests are handled via shell execution
+  with built-in GUI error catching.  Real-Time Telemetry & Hardware Monitoring: Integrates
+  LibreHardwareMonitorLib (v0.9.3) via HardwareMonitorService to continuously poll
+  hardware sensors for CPU load, GPU load (AMD and NVIDIA), and RAM consumption.  Dynamic
+  Visual Threshold Indicators: Telemetry metrics map directly to visual UI controls
+  (e.g., radial gauges and navigation bar HUDs) with automated color-coding thresholds—dynamically
+  shifting between Green (<50%), Gold/Yellow (50–79%), and Red (≥80%).  Automated
+  Media & Metadata Resolution: Connects to the SteamGridDB API (SteamGridService.cs)
+  to fetch box art and media assets, automatically falling back to cached local storage
+  or customizable placeholders.  Library Management & Custom Filtering: Supports real-time
+  string searching, custom categorizations, manual user overrides, tag management,
+  and recent session tracking.  Modern Dark UI: Uses a WPF dark theme with customizable
+  layout scaling, grid spacing adjustments, overlay settings, and active banner hover
+  animations.'
+author: Chasz Lacy
+# Which agent platforms to deploy to.
+# Resolution order: --target flag > this field > auto-detect from filesystem.
+# Accepted values: agent-skills, antigravity, claude, codex, copilot, cursor, gemini, grok-build, kiro, opencode, windsurf
+targets:
+- claude
+- codex
+- copilot
+- cursor
+- gemini
+- opencode
+dependencies:
+  apm: []
+  mcp: []
+includes: auto
+scripts: {}

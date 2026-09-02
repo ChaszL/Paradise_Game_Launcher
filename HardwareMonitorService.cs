@@ -27,68 +27,90 @@ public class HardwareInfo
     }
 }
 
-public class HardwareMonitorService
+public class HardwareMonitorService : IDisposable
 {
-    private Computer _computer;
+    private Computer? _computer;
+    private bool _available;
 
     public HardwareMonitorService()
     {
-        _computer = new Computer
+        try
         {
-            IsCpuEnabled = true,
-            IsGpuEnabled = true,
-            IsMemoryEnabled = true
-        };
-        _computer.Open();
+            _computer = new Computer
+            {
+                IsCpuEnabled = true,
+                IsGpuEnabled = true,
+                IsMemoryEnabled = true
+            };
+            _computer.Open();
+            _available = true;
+        }
+        catch
+        {
+            // Sensor access failed (no admin rights, unsupported hardware, VM, etc.)
+            // Leave _available false so GetMetrics() returns safe zeroed data instead of crashing.
+            _computer = null;
+            _available = false;
+        }
     }
 
     public HardwareInfo GetMetrics()
     {
         var info = new HardwareInfo();
+        if (!_available || _computer == null) return info; // all zeros, UI just shows 0%
+
         float memUsed = 0;
         float memAvailable = 0;
 
-        foreach (IHardware hardware in _computer.Hardware)
+        try
         {
-            hardware.Update();
-
-            foreach (ISensor sensor in hardware.Sensors)
+            foreach (IHardware hardware in _computer.Hardware)
             {
-                // Handle CPU Load
-                if (hardware.HardwareType == HardwareType.Cpu && 
-                    sensor.SensorType == SensorType.Load && 
-                    sensor.Name == "CPU Total")
-                {
-                    info.CPUValue = (int)(sensor.Value ?? 0);
-                }
+                hardware.Update();
 
-                // Handle GPU Load (AMD and NVIDIA)
-                if ((hardware.HardwareType == HardwareType.GpuAmd || hardware.HardwareType == HardwareType.GpuNvidia) && 
-                    sensor.SensorType == SensorType.Load)
+                foreach (ISensor sensor in hardware.Sensors)
                 {
-                    // AMD often uses "GPU Core" while some drivers/versions might use "GPU Total"
-                    if (sensor.Name == "GPU Core")
+                    if (hardware.HardwareType == HardwareType.Cpu &&
+                        sensor.SensorType == SensorType.Load &&
+                        sensor.Name == "CPU Total")
                     {
-                        info.GPUValue = (int)(sensor.Value ?? 0);
+                        info.CPUValue = (int)(sensor.Value ?? 0);
+                    }
+
+                    if ((hardware.HardwareType == HardwareType.GpuAmd || hardware.HardwareType == HardwareType.GpuNvidia) &&
+                        sensor.SensorType == SensorType.Load)
+                    {
+                        if (sensor.Name == "GPU Core")
+                        {
+                            info.GPUValue = (int)(sensor.Value ?? 0);
+                        }
+                    }
+
+                    if (hardware.HardwareType == HardwareType.Memory)
+                    {
+                        if (sensor.Name == "Memory Used") memUsed = sensor.Value ?? 0;
+                        if (sensor.Name == "Memory Available") memAvailable = sensor.Value ?? 0;
                     }
                 }
+            }
 
-                // Handle RAM
-                if (hardware.HardwareType == HardwareType.Memory)
-                {
-                    if (sensor.Name == "Memory Used") memUsed = sensor.Value ?? 0;
-                    if (sensor.Name == "Memory Available") memAvailable = sensor.Value ?? 0;
-                }
+            float totalRam = memUsed + memAvailable;
+            if (totalRam > 0)
+            {
+                info.RAMValue = (int)((memUsed / totalRam) * 100);
             }
         }
-
-        // Calculate RAM percentage safely
-        float totalRam = memUsed + memAvailable;
-        if (totalRam > 0)
+        catch
         {
-            info.RAMValue = (int)((memUsed / totalRam) * 100);
+            // A sensor read failed mid-poll (e.g. device disconnected). Return whatever we got.
         }
 
         return info;
+    }
+
+    public void Dispose()
+    {
+        try { _computer?.Close(); } catch { }
+        _computer = null;
     }
 }
