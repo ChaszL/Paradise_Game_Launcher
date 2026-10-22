@@ -2,12 +2,15 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace GameLauncher;
 
 public class AppSettings
 {
-    public string SteamGridApiKey { get; set; } = "5f7b7a352ae31a15d4f5adde3bad2227";
+    // Loaded from .env (STEAMGRID_API_KEY), never written to settings.json
+    [JsonIgnore]
+    public string SteamGridApiKey { get; set; } = LoadEnvValue("STEAMGRID_API_KEY") ?? "";
     public int BannerWidth { get; set; } = 150;
     public int BannerHeight { get; set; } = 225;
     public string BackgroundColor { get; set; } = "#121212";
@@ -20,6 +23,29 @@ public class AppSettings
     private static readonly string SettingsPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "settings.json");
     private static readonly string CategoriesPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "game_categories.json");
     private static readonly string UserCategoriesPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "user_categories.json");
+
+    private static string? LoadEnvValue(string key)
+    {
+        // Real environment variables take priority over the .env file
+        string? value = Environment.GetEnvironmentVariable(key);
+        if (!string.IsNullOrWhiteSpace(value)) return value;
+
+        string envPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, ".env");
+        if (!File.Exists(envPath)) return null;
+
+        foreach (string rawLine in File.ReadAllLines(envPath))
+        {
+            string line = rawLine.Trim();
+            if (line.Length == 0 || line.StartsWith('#')) continue;
+
+            int eq = line.IndexOf('=');
+            if (eq <= 0) continue;
+
+            if (line[..eq].Trim() == key)
+                return line[(eq + 1)..].Trim().Trim('"');
+        }
+        return null;
+    }
 
     public static AppSettings Load()
     {

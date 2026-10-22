@@ -1,0 +1,20 @@
+# Secrets
+.env
+.env.*
+!.env.example
+
+# Build output
+bin/
+obj/
+
+# Visual Studio / IDE
+.vs/
+.vscode/
+*.user
+*.suo
+*.lscache
+
+# Config / data files
+*.json
+*.yml
+*.yaml

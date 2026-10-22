@@ -13,4 +13,8 @@
   <PackageReference Include="LibreHardwareMonitorLib" Version="0.9.6" />
 </ItemGroup>
 
+  <ItemGroup>
+    <None Include=".env" Condition="Exists('.env')" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
 </Project>
