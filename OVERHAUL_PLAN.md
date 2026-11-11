@@ -3,6 +3,47 @@
 Approach: frontend → backend. Build each screen with fake data first, then connect the real services.
 Architecture: WPF + MVVM (CommunityToolkit.Mvvm). Work happens on the `overhaul` branch.
 
+## Project structure
+
+Five folders, each with one job. Keep it this simple: add a file before adding a folder.
+
+```
+Paradise_Game_Launcher/
+├─ App.xaml
+├─ Models/        what the data looks like
+│   ├─ GameData.cs
+│   ├─ AppSettings.cs
+│   └─ HardwareInfo.cs
+├─ Views/         what you see
+│   ├─ MainWindow.xaml(.cs)
+│   └─ SettingsWindow.xaml(.cs)
+├─ ViewModels/    what the screen knows and does
+│   ├─ MainViewModel.cs
+│   └─ SettingsViewModel.cs
+├─ Services/      talks to the outside world (disk, registry, internet, hardware)
+│   ├─ GameDetectionService.cs
+│   ├─ LauncherDetectionService.cs
+│   ├─ SteamGridService.cs
+│   ├─ HardwareMonitorService.cs
+│   ├─ StorageService.cs
+│   └─ Launcher.cs
+└─ Helpers/       small tools used anywhere
+    ├─ ColorMath.cs
+    └─ ProgressToDashArrayConverter.cs
+```
+
+### Where does this code go?
+
+- It **describes a thing** (a game, a setting) → `Models`
+- It **draws something** → `Views`
+- It **decides what to show, or reacts to a click** → `ViewModels`
+- It **touches files, the registry, the internet or hardware** → `Services`
+- It's a **small calculation with no state** → `Helpers`
+
+If you can't decide, the method is probably doing two jobs and should be split.
+
+Services return data and never touch the UI (no `Dispatcher`, no controls).
+
 ## Main window
 
 **Top bar:** logo, small CPU/RAM/GPU gauges, search bar, category filter, settings button.
