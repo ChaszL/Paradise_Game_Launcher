@@ -1,9 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-
 namespace GameLauncher;
-public class ColorMath
+public static class ColorMath
 {
     public static string ToHex(System.Windows.Media.Color color)
     {

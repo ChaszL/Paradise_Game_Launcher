@@ -7,7 +7,7 @@
 
     <Window.Resources>
         <!-- The new converter that calculates circle fill -->
-        <local:ProgressToDashArrayConverter x:Key="ProgressConverter"/>
+        <local:DashboardProgressConverter x:Key="ProgressConverter"/>
 
         <!-- Custom ScrollBar -->
         <Style TargetType="{x:Type ScrollBar}">
