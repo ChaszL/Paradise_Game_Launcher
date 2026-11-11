@@ -26,7 +26,7 @@ Paradise_Game_Launcher/
 │   ├─ SteamGridService.cs
 │   ├─ HardwareMonitorService.cs
 │   ├─ StorageService.cs
-│   └─ Launcher.cs
+│   └─ GameLauncherService.cs
 └─ Helpers/       small tools used anywhere
     ├─ ColorMath.cs
     └─ ProgressToDashArrayConverter.cs
