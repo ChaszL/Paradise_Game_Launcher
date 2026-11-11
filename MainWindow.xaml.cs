@@ -599,7 +599,7 @@ public partial class MainWindow : Window, INotifyPropertyChanged
     {
         if (sender is Button btn && btn.DataContext is GameData game)
         {
-            Launcher.Launch(game);
+            GameLauncherService.Launch(game);
             AddToRecents(game);
         }
     }

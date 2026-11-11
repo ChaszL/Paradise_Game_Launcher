@@ -4,7 +4,7 @@ using System.Windows; // Required for MessageBox
 
 namespace GameLauncher
 {
-    public class Launcher
+    public class GameLauncherService
     {
         // method to launch a given game from the gamedata object
         public static void Launch(GameData game)
